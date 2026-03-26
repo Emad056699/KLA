@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>جدول إجازتك في كوالالمبور</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #060606;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      direction: rtl;
+      color: #fff;
+    }
+    .app { min-height: 100vh; }
+    .header {
+      padding: 26px 20px 18px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 40%, rgba(255,255,255,0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .header-flag { font-size: 28px; margin-bottom: 2px; position: relative; z-index: 1; }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 0 0 3px;
+      letter-spacing: -0.5px;
+      position: relative;
+      z-index: 1;
+    }
+    .header p {
+      position: relative;
+      z-index: 1;
+      margin: 2px 0;
+    }
+    .header .sub1 { font-size: 11px; opacity: 0.7; }
+    .header .sub2 { font-size: 10px; opacity: 0.45; margin-top: 3px; }
+    .week-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 12px 12px 4px;
+      justify-content: center;
+    }
+    .week-tab {
+      flex: 1;
+      padding: 10px 4px;
+      border-radius: 12px;
+      background: #0D0D0D;
+      color: #555;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid #181818;
+      font-family: inherit;
+    }
+    .week-tab .emoji { font-size: 15px; margin-bottom: 1px; }
+    .week-tab .subtitle { font-size: 8.5px; font-weight: 400; opacity: 0.7; margin-top: 2px; }
+    .progress {
+      display: flex;
+      justify-content: center;
+      gap: 3px;
+      padding: 8px 14px 4px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: #1A1A1A;
+      transition: all 0.3s;
+    }
+    .days-container { padding: 4px 12px 14px; }
+    .day-card {
+      background: #0A0A0A;
+      border-radius: 13px;
+      margin-bottom: 7px;
+      border: 1px solid #161616;
+      cursor: pointer;
+      transition: all 0.3s;
+      overflow: hidden;
+    }
+    .day-summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+    }
+    .day-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #141414;
+      border: 1px solid #1E1E1E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+    .day-content { flex: 1; min-width: 0; }
+    .day-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+    .day-number { font-size: 10px; font-weight: 700; }
+    .day-category {
+      font-size: 8.5px;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: #151515;
+      color: #777;
+    }
+    .day-title {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .chevron {
+      transition: transform 0.3s;
+      font-size: 11px;
+      color: #333;
+    }
+    .day-details {
+      display: none;
+      padding: 0 12px 12px;
+    }
+    .day-card.expanded .day-details { display: block; }
+    .day-card.expanded .chevron { transform: rotate(180deg); }
+    .highlight {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .section-row {
+      padding: 9px 0;
+      border-top: 1px solid #181818;
+    }
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .section-row p {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.75;
+      color: #aaa;
+    }
+    .tip-box {
+      margin-top: 6px;
+      padding: 9px 10px;
+      border-radius: 9px;
+    }
+    .tip-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 3px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .tip-box p {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1.65;
+      color: #888;
+    }
+    .info-wrap { padding: 0 12px 8px; }
+    .info-card {
+      background: #0D0D0D;
+      border-radius: 13px;
+      padding: 12px 14px;
+      border: 1px solid #181818;
+    }
+    .info-card h3 {
+      font-size: 12.5px;
+      margin: 0 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .info-items {
+      font-size: 11px;
+      color: #777;
+      line-height: 1.85;
+    }
+    .info-items p { margin: 0 0 3px; }
+    .spacer { height: 20px; }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div class="header" id="header">
+      <div class="header-flag">🇲🇾</div>
+      <h1>جدول إجازتك في كوالالمبور</h1>
+      <p class="sub1">٣ أسابيع: طبيعة • شلالات • جزيرة • شاطئ • تسوّق • ثقافة</p>
+      <p class="sub2">جامعة لنكن — بترالينغ جايا | الجواز مسلّم للفيزا</p>
+    </div>
+
+    <div class="week-tabs" id="weekTabs"></div>
+    <div class="progress" id="progress"></div>
+    <div class="days-container" id="daysContainer"></div>
+    <div id="infoCards"></div>
+    <div class="spacer"></div>
+  </div>
+
+  <script>
+    const days = [
+      { day: 1, week: 1, title: "الوصول والاستقرار", emoji: "🏠", category: "إجراءات", morning: "الوصول، ترتيب السكن، شراء مستلزمات من Giant Kelana Jaya القريب", outing: "تمشية خفيفة حول الحي + Paradigm Mall بجانب الجامعة للتعرف على المنطقة وشراء الاحتياجات (شريحة جوال، أدوات مطبخ، مستلزمات)", transport: "مشي 5-10 دقائق", tip: "حمّل تطبيق Grab (مثل أوبر) و Touch 'n Go eWallet — ضروريين جداً في ماليزيا", highlight: "استقرار" },
+      { day: 2, week: 1, title: "🏥 الفحص الطبي + غابة Bukit Gasing", emoji: "🏥", category: "إجراءات + طبيعة", morning: "الفحص الطبي الصباحي (حسب الموعد)", outing: "بعد الفحص: Bukit Gasing Forest Reserve — غابة استوائية على بُعد دقائق من بترالينغ جايا! مسارات مشي وسط أشجار عملاقة مع إطلالة بانورامية على أفق كوالالمبور من القمة", transport: "Grab (10 دقائق من الجامعة)", tip: "Bukit Gasing قريبة جداً من سكنك — مثالية للرياضة الصباحية طوال إقامتك!", highlight: "فحص طبي + طبيعة" },
+      { day: 3, week: 1, title: "الغابة المعلّقة + أبراج بتروناس", emoji: "🌿", category: "طبيعة + سياحة", morning: "رياضة + قهوة + فطور في المنزل", outing: "KL Forest Eco Park — ممر معلّق (Canopy Walk) فوق غابة استوائية عمرها 130 مليون سنة وسط المدينة! ثم Suria KLCC للتسوّق، حديقة KLCC، نافورة الموسيقى المسائية (8-9-10 مساءً)", transport: "LRT من Kelana Jaya إلى KLCC (~20 دقيقة)", tip: "KL Forest Eco Park بجانب KL Tower — الممر المعلّق تجربة مذهلة فوق أشجار عملاقة وبالمجان!", highlight: "غابة معلّقة + أبراج" },
+      { day: 4, week: 1, title: "📋 تسليم الجواز + حديقة الطيور", emoji: "📋", category: "إجراءات + طبيعة", morning: "تسليم الجواز في الجامعة لاستخراج فيزة الطالب", outing: "KL Bird Park — أكبر حديقة طيور مسقوفة في العالم! أكثر من 3000 طائر حر الطيران. ثم Perdana Botanical Garden + حديقة الفراشات + حديقة الأوركيد", transport: "Grab إلى Lake Gardens", tip: "حديقة الطيور تجربة فريدة — الطيور تطير حولك بحرية! خصص ساعتين", highlight: "تسليم جواز + طيور" },
+      { day: 5, week: 1, title: "Pavilion + Jalan Alor الأكل الشعبي", emoji: "🛍️", category: "تسوّق + أكل", morning: "رياضة في Bukit Gasing + قهوة + فطور", outing: "Pavilion KL — أفضل مول للتسوّق + Tokyo Street. ثم Lot 10 فوود هول ياباني. مساءً: شارع Jalan Alor — أشهر شارع أكل شعبي في ماليزيا!", transport: "LRT إلى Bukit Bintang", tip: "Jalan Alor ينشط من 5 مساءً — جرّب الساتيه والمي غورينغ وعصير الفواكه الطازج", highlight: "تسوّق + أكل شعبي" },
+      { day: 6, week: 1, title: "شلالات كانشينغ + غابة مطيرة", emoji: "💧", category: "طبيعة ومغامرة", morning: "فطور خفيف — انطلاق مبكر", outing: "Kanching Rainforest Waterfall & Templer Park — 7 مستويات من الشلالات وسط غابة مطيرة! سباحة في المسابح الطبيعية، مسارات مشي، تلة Bukit Takun الجيرية (مليون سنة!). المكان 30 دقيقة فقط من KL", transport: "Grab (~30 دقيقة)", tip: "خذ منشفة وملابس سباحة. المستويات 1-3 سهلة، 4-7 تحتاج لياقة. الماء بارد ومنعش!", highlight: "شلالات 7 مستويات!" },
+      { day: 7, week: 1, title: "يوم راحة + 1 Utama العملاق", emoji: "😌", category: "راحة + ترفيه", morning: "نوم إضافي + فطور هادي", outing: "1 Utama — من أكبر المولات في العالم! Secret Garden حديقة استوائية على السطح (30,000 قدم²)، Camp5 أكبر جدار تسلّق داخلي في آسيا، FlowRider تزلّج أمواج، سينما IMAX", transport: "Grab (~15 دقيقة)", tip: "Secret Garden مجانية ومذهلة. Camp5 لو تحب التحدي — تسلّق صخور حقيقي!", highlight: "حديقة سطح + تسلّق" },
+      { day: 8, week: 2, title: "كهوف باتو + شلال سونغاي توا", emoji: "🐒", category: "سياحة + طبيعة", morning: "رياضة + قهوة + فطور", outing: "Batu Caves — 272 درجة ملوّنة + تمثال ذهبي ضخم (42 متر!). ثم Sungai Tua Waterfall القريب — شلال جميل مع مسابح طبيعية وسط الغابة للسباحة", transport: "KTM Komuter أو Grab", tip: "روح باتو كيفز قبل 9 الصبح لتجنب الزحام والحر. الشلال قريب — اجمعهم بيوم!", highlight: "كهوف ملوّنة + شلال" },
+      { day: 9, week: 2, title: "رحلة يومية: ملاكا — تراث عالمي", emoji: "🏛️", category: "رحلة يومية", morning: "فطور خفيف — انطلاق مبكر", outing: "Malacca (UNESCO) — الساحة الهولندية الحمراء، حصن A Famosa البرتغالي، شارع Jonker Walk للتسوّق والأكل، كروز نهري، شارع الانسجام (3 دور عبادة متجاورة). مزيج ثقافي مذهل!", transport: "باص من TBS Terminal (~2 ساعة، 10-15 رنجت فقط!)", tip: "الباصات كل 15 دقيقة. خذ نسخة من الجواز + وصل التسليم معك. جرّب لاكسا ملاكا!", highlight: "تراث عالمي UNESCO" },
+      { day: 10, week: 2, title: "FRIM Skywalk + الحي الصيني", emoji: "🌳", category: "طبيعة + ثقافة", morning: "انطلاق مبكر — فطور خفيف", outing: "FRIM Forest Skywalk — ممر معلّق على ارتفاع 50 متر فوق الغابة! 260 متر من المشي فوق الأشجار مع إطلالة على KL. بعد الظهر: Petaling Street الحي الصيني + Central Market للحرف والهدايا", transport: "Grab إلى FRIM (~30 دقيقة)، LRT للحي الصيني", tip: "FRIM يفتح 8:30ص — 150 شخص فقط يومياً! احجز أو روح بدري. فاوض في Petaling Street", highlight: "50 متر فوق الغابة!" },
+      { day: 11, week: 2, title: "TRX الحديث + KL Tower بانوراما", emoji: "✨", category: "تسوّق + إطلالات", morning: "رياضة في Bukit Gasing + قهوة + فطور", outing: "The Exchange TRX — أحدث مول فاخر (2024)، TRX City Park أكبر حديقة سطح في ماليزيا (مجانية!). ثم KL Tower — Sky Deck مراقبة 360° + Sky Box صندوق زجاجي معلّق في الهواء!", transport: "MRT إلى TRX، Grab إلى KL Tower", tip: "Sky Box في KL Tower — صندوق زجاجي معلّق! تجربة مثيرة. حديقة TRX السطحية مجانية ومذهلة", highlight: "حديقة سطح + بانوراما" },
+      { day: 12, week: 2, title: "بوتراجايا — المسجد الوردي + حدائق", emoji: "🌸", category: "سياحة + طبيعة", morning: "رياضة + قهوة + فطور", outing: "Putrajaya — المسجد الوردي (Putra Mosque) على البحيرة (من أجمل المساجد في العالم!)، Putrajaya Botanical Garden حدائق نباتية واسعة، جسر Seri Wawasan، كروز البحيرة بالقارب", transport: "KLIA Transit أو Grab (~30 دقيقة)", tip: "المسجد الوردي وقت الغروب = أجمل صورة ممكنة. كروز البحيرة ممتع ورخيص (~30 رنجت)", highlight: "مسجد وردي + حدائق" },
+      { day: 13, week: 2, title: "🦀 جزيرة بولاو كيتام — قرية صيادين", emoji: "🦀", category: "جزيرة + طبيعة", morning: "انطلاق مبكر — فطور خفيف", outing: "Pulau Ketam (جزيرة السلطعون) — قرية صيادين صينية تقليدية على أعمدة فوق البحر! لا سيارات — فقط دراجات ومشي. بيوت خشبية ملوّنة، مأكولات بحرية طازجة ورخيصة جداً، أجواء هادئة", transport: "قطار KTM إلى Pelabuhan Klang (آخر محطة) ثم قارب سريع 20 دقيقة", tip: "لا تحتاج جواز! فقط قطار + قارب. المأكولات البحرية طازجة من البحر مباشرة — أرخص بكثير من المدينة", highlight: "جزيرة بدون جواز!" },
+      { day: 14, week: 2, title: "يوم راحة + معبد ثيان هاو + بانغسار", emoji: "☕", category: "راحة + ثقافة", morning: "نوم إضافي + فطور هادي", outing: "Thean Hou Temple — معبد صيني مذهل بإطلالة بانورامية (مجاني!). ثم Bangsar — حي عصري بكافيهات مميزة ومطاعم عالمية. Bangsar Village للتسوّق الهادي", transport: "Grab ثم LRT إلى Bangsar", tip: "المعبد أجمل وقت الغروب — ألوان المعبد + أضواء المدينة. بانغسار = أفضل كافيهات في KL", highlight: "معبد بانورامي + كافيهات" },
+      { day: 15, week: 3, title: "رحلة: مرتفعات جنتنق + تلفريك", emoji: "🎢", category: "رحلة يومية", morning: "فطور خفيف — انطلاق مبكر", outing: "Genting Highlands — تلفريك Awana SkyWay فوق غابة 130 مليون سنة! معبد Chin Swee Caves على حافة الجبل، ملاهي Skytropolis، Genting Premium Outlets تسوّق بخصومات 70%، جو بارد ومنعش", transport: "Grab إلى محطة التلفريك (~ساعة)", tip: "خذ جاكيت! الجو بارد (16-20°). التلفريك يتوقف عند المعبد مجاناً — منظر خيالي!", highlight: "تلفريك فوق الغابة" },
+      { day: 16, week: 3, title: "🏖️ شاطئ بورت ديكسون — يوم بحري", emoji: "🏖️", category: "شاطئ", morning: "فطور خفيف — انطلاق مبكر", outing: "Port Dickson — أقرب شاطئ من KL! رمال بيضاء، سباحة، رياضات مائية (بنانا بوت، جت سكي). Cape Rachado Lighthouse — منارة برتغالية تاريخية فوق تلة بإطلالة بحرية. مأكولات بحرية طازجة", transport: "Grab (~1.5 ساعة) — أسهل وأسرع من الباص", tip: "خذ واقي شمس ومنشفة! الشاطئ + المنارة + الأكل البحري = يوم مثالي. Pantai Teluk Kemang أفضل شاطئ", highlight: "بحر وشاطئ رملي!" },
+      { day: 17, week: 3, title: "المسجد الوطني + متحف الفنون الإسلامية", emoji: "🕌", category: "ثقافة + تاريخ", morning: "رياضة + قهوة + فطور", outing: "Merdeka Square — ساحة الاستقلال. Masjid Negara المسجد الوطني (تصميم مذهل!). متحف الفنون الإسلامية — مجسمات مساجد، مصاحف نادرة، خطوط عربية، فنون إسلامية من كل العالم", transport: "LRT إلى Masjid Jamek", tip: "متحف الفنون الإسلامية يستحق 2-3 ساعات — مجموعة استثنائية. المسجد الوطني مفتوح للزوار بين الصلوات", highlight: "تراث إسلامي مذهل" },
+      { day: 18, week: 3, title: "Sunway Lagoon — ألعاب مائية ضخمة", emoji: "💦", category: "مغامرة + ترفيه", morning: "فطور في المنزل", outing: "Sunway Lagoon — مدينة ترفيه ضخمة: زحاليق مائية عملاقة + أمواج صناعية + حديقة حيوانات + ملاهي + Nickelodeon. يوم كامل من المرح! ثم Sunway Pyramid المجاور — مول بتصميم مصري فرعوني مع حلبة تزلّج", transport: "Grab أو BRT Sunway (~20 دقيقة)", tip: "اشترِ التذكرة أونلاين = أرخص. خذ ملابس سباحة + واقي شمس. يحتاج يوم كامل", highlight: "ألعاب مائية ممتعة!" },
+      { day: 19, week: 3, title: "Mid Valley + Little India بريكفيلدز", emoji: "🛒", category: "تسوّق + ثقافة", morning: "رياضة + قهوة + فطور", outing: "Mid Valley Megamall تسوّق بأسعار ممتازة + The Gardens Mall الفاخر. ثم Brickfields (Little India) — حي هندي ملوّن بمطاعم هندية أصلية ومحلات بهارات. NU Sentral عند KL Sentral", transport: "LRT + shuttle أو Grab", tip: "البِرياني وماسالا دوسا في Brickfields من أفضل الأكل الهندي في كل ماليزيا!", highlight: "تسوّق + أكل هندي" },
+      { day: 20, week: 3, title: "هدايا + شلال سونغاي غاباي أو Tadom Hill", emoji: "🎁", category: "طبيعة + تسوّق", morning: "رياضة + قهوة + فطور", outing: "خيار 1: Central Market للهدايا (باتيك، شوكولاتة، بهارات) + Sungai Gabai Waterfall (شلال جميل ساعة من KL مع مسار مشي). خيار 2: Tadom Hill Resorts — بحيرات فيروزية + تلال جيرية + أراجيح معلّقة فوق الماء!", transport: "LRT أو Grab", tip: "Tadom Hill = مكان تصوير مذهل! أو اجمع الهدايا + شلال أخير كذكرى. أو ارجع لأماكنك المفضّلة", highlight: "مغامرة أخيرة أو هدايا" },
+      { day: 21, week: 3, title: "الوداع — حديقة KLCC + غروب الأبراج", emoji: "🌅", category: "وداع", morning: "نوم + فطور هادي + ترتيب الشنط", outing: "صباح في حديقة KLCC — مشي بين الأشجار مع إطلالة على الأبراج. كافيه هادي. تمشية أخيرة في Bukit Bintang. صور تذكارية عند أبراج بتروناس وقت الغروب = أجمل وداع", transport: "LRT إلى KLCC", tip: "الغروب عند الأبراج (6:30-7:30م) = الإضاءة الذهبية + أضواء الأبراج = أجمل صورة. الله يوفقك في الدكتوراه!", highlight: "وداع كوالالمبور 💛" }
+    ];
+
+    const weekColors = {
+      1: { bg: "linear-gradient(135deg, #0D4F4F 0%, #1A6B6B 100%)", accent: "#2DD4A8", card: "#0F3D3D", glow: "rgba(45,212,168,0.12)" },
+      2: { bg: "linear-gradient(135deg, #3D1F5C 0%, #5A2D82 100%)", accent: "#C084FC", card: "#2D1647", glow: "rgba(192,132,252,0.12)" },
+      3: { bg: "linear-gradient(135deg, #5C3D1F 0%, #8B5E34 100%)", accent: "#FBBF24", card: "#4A3018", glow: "rgba(251,191,36,0.12)" }
+    };
+
+    const weekTitles = {
+      1: "استقرار + وسط المدينة + شلالات",
+      2: "جزيرة + تراث + ممرات معلّقة",
+      3: "شاطئ + جبال + وداع"
+    };
+
+    const infoCards = [
+      {
+        icon: "🏝️",
+        title: "الجزر والشواطئ",
+        items: [
+          "🦀 بولاو كيتام (يوم 13) — جزيرة بالقطار + قارب، بدون جواز!",
+          "🏖️ بورت ديكسون (يوم 16) — أقرب شاطئ رملي (~1.5 ساعة)",
+          "🏝️ بانغكور — 3.5 ساعات + فيري (تحتاج جواز للفندق)",
+          "✈️ لانكاوي/رداق/بيرهنتيان — تحتاج طيران، غير ممكنة حالياً"
+        ]
+      },
+      {
+        icon: "🌿",
+        title: "١٠ تجارب طبيعة في الجدول",
+        items: [
+          "🌳 Bukit Gasing — غابة بجانبك (يوم 2)",
+          "🌉 KL Eco Park — ممر معلّق وسط المدينة (يوم 3)",
+          "🦜 حديقة الطيور والفراشات (يوم 4)",
+          "💧 شلالات كانشينغ 7 مستويات (يوم 6)",
+          "🐒 كهوف باتو + شلال سونغاي توا (يوم 8)",
+          "🌉 FRIM Skywalk — 50 متر فوق الغابة (يوم 10)",
+          "🌸 حدائق بوتراجايا النباتية (يوم 12)",
+          "🦀 جزيرة بولاو كيتام (يوم 13)",
+          "⛰️ جنتنق — جبال + تلفريك (يوم 15)",
+          "🏖️ بورت ديكسون — شاطئ + منارة (يوم 16)"
+        ]
+      },
+      {
+        icon: "📌",
+        title: "ملاحظات مهمة",
+        items: [
+          "الفحص الطبي يوم 2 — تسليم الجواز يوم 4",
+          "كل التنقلات برية — قطار LRT/KTM، Grab، باص",
+          "احتفظ بنسخة الجواز + وصل التسليم دائماً",
+          "Grab + Touch 'n Go = أساسيات التنقل",
+          "LRT Kelana Jaya = خط مباشر لوسط المدينة",
+          "الأماكن الطبيعية — روح بدري الصبح",
+          "الجو حار ورطب — مظلة + مويه + واقي شمس"
+        ]
+      }
+    ];
+
+    let selectedWeek = 1;
+    let expandedDay = null;
+
+    function render() {
+      const colors = weekColors[selectedWeek];
+      const filteredDays = days.filter(d => d.week === selectedWeek);
+
+      document.getElementById('header').style.background = colors.bg;
+
+      document.getElementById('weekTabs').innerHTML = [1, 2, 3].map(w => `
+        <button class="week-tab" data-week="${w}" style="
+          border-color: ${selectedWeek === w ? weekColors[w].accent : '#181818'};
+          background: ${selectedWeek === w ? weekColors[w].card : '#0D0D0D'};
+          color: ${selectedWeek === w ? weekColors[w].accent : '#555'};
+        ">
+          <div class="emoji">${w === 1 ? '🌿' : w === 2 ? '🦀' : '🏖️'}</div>
+          الأسبوع ${w}
+          <div class="subtitle">${weekTitles[w]}</div>
+        </button>
+      `).join('');
+
+      document.getElementById('progress').innerHTML = filteredDays.map(d => `
+        <div class="progress-bar" style="background: ${expandedDay === d.day ? colors.accent : '#1A1A1A'}"></div>
+      `).join('');
+
+      document.getElementById('daysContainer').innerHTML = filteredDays.map(day => {
+        const isExpanded = expandedDay === day.day;
+        return `
+          <div class="day-card ${isExpanded ? 'expanded' : ''}" data-day="${day.day}" style="
+            background: ${isExpanded ? '#121212' : '#0A0A0A'};
+            border-color: ${isExpanded ? colors.accent + '40' : '#161616'};
+            box-shadow: ${isExpanded ? `0 4px 20px ${colors.glow}` : 'none'};
+          ">
+            <div class="day-summary">
+              <div class="day-icon" style="
+                background: ${isExpanded ? colors.accent + '18' : '#141414'};
+                border-color: ${isExpanded ? colors.accent + '35' : '#1E1E1E'};
+              ">${day.emoji}</div>
+              <div class="day-content">
+                <div class="day-meta">
+                  <span class="day-number" style="color: ${colors.accent}">يوم ${day.day}</span>
+                  <span class="day-category">${day.category}</span>
+                </div>
+                <div class="day-title">${day.title}</div>
+              </div>
+              <div class="chevron">▼</div>
+            </div>
+            <div class="day-details">
+              <div class="highlight" style="
+                background: ${colors.accent + '12'};
+                border: 1px solid ${colors.accent + '28'};
+                color: ${colors.accent};
+              ">⭐ ${day.highlight}</div>
+
+              ${[
+                { icon: '🌅', label: 'الصباح', text: day.morning, color: '#F59E0B' },
+                { icon: '🎯', label: 'الوجهة والفعالية', text: day.outing, color: colors.accent },
+                { icon: '🚇', label: 'المواصلات', text: day.transport, color: '#60A5FA' }
+              ].map(section => `
+                <div class="section-row">
+                  <div class="section-label" style="color: ${section.color}">
+                    <span>${section.icon}</span>
+                    <span>${section.label}</span>
+                  </div>
+                  <p>${section.text}</p>
+                </div>
+              `).join('')}
+
+              <div class="tip-box" style="
+                background: ${colors.accent + '08'};
+                border: 1px dashed ${colors.accent + '28'};
+              ">
+                <div class="tip-label" style="color: ${colors.accent}">
+                  <span>💡</span>
+                  <span>نصيحة</span>
+                </div>
+                <p>${day.tip}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('infoCards').innerHTML = infoCards.map((card, index) => `
+        <div class="info-wrap">
+          <div class="info-card">
+            <h3 style="color: ${colors.accent}"><span>${card.icon}</span> ${card.title}</h3>
+            <div class="info-items">
+              ${card.items.map(item => `<p>${index === 2 ? '• ' + item : item}</p>`).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.week-tab').forEach(button => {
+        button.addEventListener('click', () => {
+          selectedWeek = Number(button.dataset.week);
+          expandedDay = null;
+          render();
+        });
+      });
+
+      document.querySelectorAll('.day-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const day = Number(card.dataset.day);
+          expandedDay = expandedDay === day ? null : day;
+          render();
+        });
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
